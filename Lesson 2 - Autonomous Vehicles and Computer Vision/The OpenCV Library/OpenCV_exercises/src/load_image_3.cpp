@@ -13,6 +13,10 @@ void loadImage3()
     vector<cv::Mat> imgList;
     for (int i = 5; i <= 9; i++)
     {
+        if(i==7)
+        {
+            continue;
+        }
         // create file name
         ostringstream imgNumber;                   // #include <sstream>
         imgNumber << setfill('0') << setw(4) << i; // #include <iomanip>
