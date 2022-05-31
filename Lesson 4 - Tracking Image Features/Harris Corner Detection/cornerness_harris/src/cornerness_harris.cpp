@@ -37,6 +37,46 @@ void cornernessHarris()
     // and perform a non-maximum suppression (NMS) in a local neighborhood around 
     // each maximum. The resulting coordinates shall be stored in a list of keypoints 
     // of the type `vector<cv::KeyPoint>`.
+    vector<cv::KeyPoint> keyPoints;
+    double maxOverlap = 0.0; // max. permissible overlap between two features in %, used during non-maxima suppression
+    for (size_t j = 0; j < dst_norm.rows; j++)
+    {
+        for (size_t i = 0; i < dst_norm.cols; i++)
+        {
+            int response = (int)dst_norm.at<float>(j, i);
+            if(response > minResponse)
+            {
+                cv::KeyPoint newKeyPoint;
+                newKeyPoint.pt = cv::Point2f(i, j);
+                newKeyPoint.size = 2 * apertureSize;
+                newKeyPoint.response = response;
+
+                bool bOverlap = false;
+                for (auto it = keyPoints.begin(); it != keyPoints.end(); ++it)
+                {
+                    double kptOverlap = cv::KeyPoint::overlap(newKeyPoint, *it);
+                    if(kptOverlap > maxOverlap && newKeyPoint.response > (*it).response)
+                    {
+                        bOverlap = true;
+                        *it = newKeyPoint;
+                    }
+                }
+
+                if(!bOverlap)
+                {
+                    keyPoints.push_back(newKeyPoint);
+                }
+            }
+
+        }
+    }
+
+    windowName = "Harris Corner Detection Results";
+    cv::namedWindow(windowName, 5);
+    cv::Mat visImage = dst_norm_scaled.clone();
+    cv::drawKeypoints(dst_norm_scaled, keyPoints, visImage, cv::Scalar::all(-1), cv::DrawMatchesFlags::DRAW_RICH_KEYPOINTS);
+    cv::imshow(windowName, visImage);
+    cv::waitKey(0);
 
 }
 
