@@ -51,6 +51,19 @@ void detKeypoints1()
     // detector and compare both algorithms with regard to 
     // (a) number of keypoints, (b) distribution of 
     // keypoints over the image and (c) processing speed.
+    vector<cv::KeyPoint> kptsFast;
+    cv::Ptr<cv::FastFeatureDetector> detector = cv::FastFeatureDetector::create(40, true);
+    t = (double)cv::getTickCount();
+    detector->detect(img, kptsFast);
+    t = ((double)cv::getTickCount() - t) / cv::getTickFrequency();
+    cout << "Fast with n= " << kptsFast.size() << " keypoints in " << 1000 * t / 1.0 << " ms" << endl;
+
+    cv::Mat visImage2 = img.clone();
+    cv::drawKeypoints(img, kptsFast, visImage2, cv::Scalar::all(-1), cv::DrawMatchesFlags::DRAW_RICH_KEYPOINTS);
+    string windowName2 = "Fast Results";
+    cv::namedWindow(windowName2, 2);
+    imshow(windowName2, visImage2);
+    cv::waitKey(0);
 }
 
 int main()
