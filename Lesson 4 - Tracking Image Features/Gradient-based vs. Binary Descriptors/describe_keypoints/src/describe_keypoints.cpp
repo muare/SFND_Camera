@@ -4,8 +4,8 @@
 #include <opencv2/highgui.hpp>
 #include <opencv2/imgproc.hpp>
 #include <opencv2/features2d.hpp>
-#include <opencv2/xfeatures2d.hpp>
-#include <opencv2/xfeatures2d/nonfree.hpp>
+// #include <opencv2/xfeatures2d.hpp>
+// #include <opencv2/xfeatures2d/nonfree.hpp>
 
 using namespace std;
 
@@ -38,13 +38,34 @@ void descKeypoints1()
     string windowName = "BRISK Results";
     cv::namedWindow(windowName, 1);
     imshow(windowName, visImage);
-    cv::waitKey(0);
+    // cv::waitKey(0);
 
     // TODO: Add the SIFT detector / descriptor, compute the 
     // time for both steps and compare both BRISK and SIFT
     // with regard to processing speed and the number and 
     // visual appearance of keypoints.
+    cv::Ptr<cv::FeatureDetector> detectorKAZE = cv::KAZE::create();
+    vector<cv::KeyPoint> kptsKAZE;
 
+    t = (double)cv::getTickCount();
+    detectorKAZE->detect(imgGray, kptsKAZE);
+    t = ((double)cv::getTickCount() - t) / cv::getTickFrequency();
+    cout << "KAZE detector with n= " << kptsKAZE.size() << " keypoints in " << 1000 * t / 1.0 << " ms" << endl;
+
+    cv::Ptr<cv::DescriptorExtractor> descriptorKAZE = cv::KAZE::create();
+    cv::Mat descKAZE;
+    t = (double)cv::getTickCount();
+    descriptorKAZE->compute(imgGray, kptsKAZE, descKAZE);
+    t = ((double)cv::getTickCount() - t) / cv::getTickFrequency();
+    cout << "KAZE descriptor in " << 1000 * t / 1.0 << " ms" << endl;
+
+    // visualize results
+    cv::Mat visImageKAZE = img.clone();
+    cv::drawKeypoints(img, kptsKAZE, visImageKAZE, cv::Scalar::all(-1), cv::DrawMatchesFlags::DRAW_RICH_KEYPOINTS);
+    string windowName2 = "KAZE Results";
+    cv::namedWindow(windowName2, 2);
+    imshow(windowName2, visImage);
+    cv::waitKey(0);
 }
 
 int main()
