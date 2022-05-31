@@ -21,7 +21,7 @@ void gaussianSmoothing1()
     cv::Mat kernel = cv::Mat(5, 5, CV_32F, gauss_data);
   
   	// TODO: Divide each element of the kernel by the sum of all the values in the kernel.
-
+    kernel = kernel / cv::sum(kernel)[0];
     // apply filter
     cv::Mat result;
     cv::filter2D(img, result, -1, kernel, cv::Point(-1, -1), 0, cv::BORDER_DEFAULT);
