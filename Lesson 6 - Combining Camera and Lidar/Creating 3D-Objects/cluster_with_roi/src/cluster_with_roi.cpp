@@ -39,7 +39,7 @@ void showLidarTopview(std::vector<LidarPoint> &lidarPoints, cv::Size worldSize, 
         float yw = (*it).y; // world position in m with y facing left from sensor
 
         int y = (-xw * imageSize.height / worldSize.height) + imageSize.height;
-        int x = (-yw * imageSize.height / worldSize.height) + imageSize.width / 2;
+        int x = (-yw * imageSize.width / worldSize.width) + imageSize.width / 2;
 
         float zw = (*it).z; // world position in m with y facing left from sensor
         if(zw > -1.40){       
@@ -109,13 +109,14 @@ void clusterLidarWithROI(std::vector<BoundingBox> &boundingBoxes, std::vector<Li
             // check wether point is within current bounding box
             if (smallerBox.contains(pt))
             {
-                it2->lidarPoints.push_back(*it1);
-                lidarPoints.erase(it1);
-                it1--;
-                break;
+                enclosingBoxes.push_back(it2);
             }
         } // eof loop over all bounding boxes
         
+        if(enclosingBoxes.size() == 1)
+        {
+            enclosingBoxes[0]->lidarPoints.push_back(*it1);
+        }
       // TODO - check wether point has been enclosed by one or by multiple boxes. 
       // Accordingly, add Lidar point to bounding box
 
@@ -135,7 +136,7 @@ int main()
     {
         if (it->lidarPoints.size() > 0)
         {
-            showLidarTopview(it->lidarPoints, cv::Size(10.0, 25.0), cv::Size(1000, 2000));
+            showLidarTopview(it->lidarPoints, cv::Size(10.0, 25.0), cv::Size(500, 1000));
         }
     }   
 

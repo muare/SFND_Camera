@@ -46,6 +46,7 @@ void showLidarTopview()
         int red = min(255, int(255*abs(xw - worldSize.height)/worldSize.height));
         int green = min(255, int(255*(1 - abs(xw - worldSize.height)/worldSize.height)));
         cv::circle(topviewImg, cv::Point(x, y), 5, cv::Scalar(0, green, red), -1);
+        // cout<<xw<<","<<x<<";"<<yw<<","<<y<<endl;
 
     }
 
